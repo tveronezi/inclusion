@@ -13,3 +13,5 @@ cargo test
 
 # Build it
 cargo build --release
+
+cargo doc --release
