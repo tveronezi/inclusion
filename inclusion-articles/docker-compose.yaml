@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  articlesdb:
+    image: "library/postgres:13"
+    restart: on-failure
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: "rusty"
+      POSTGRES_PASSWORD: "rusty"
+      POSTGRES_DB: "articlesdb"
