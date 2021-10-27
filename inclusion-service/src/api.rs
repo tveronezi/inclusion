@@ -1,3 +1,4 @@
+use inclusion_articles::ApiError;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
@@ -29,7 +30,14 @@ impl Display for AppError {
 
 impl actix_web::ResponseError for AppError {
     fn status_code(&self) -> actix_web::http::StatusCode {
-        actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+        let AppError::Articles(error) = self;
+        match error {
+            ApiError::NotFound => actix_web::http::StatusCode::NOT_FOUND,
+            ApiError::Unknown(e) => {
+                log::error!("{:?}", e);
+                actix_web::http::StatusCode::INTERNAL_SERVER_ERROR
+            }
+        }
     }
 
     fn error_response(&self) -> actix_web::HttpResponse {

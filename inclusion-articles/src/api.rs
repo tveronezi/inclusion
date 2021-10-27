@@ -20,7 +20,7 @@ pub trait DeleteByUuid {
 }
 
 pub trait FetchByUuid {
-    fn fetch_by_uuid(connection: &Connection, uuid: &uuid::Uuid) -> crate::ApiResult<Option<Self>>
+    fn fetch_by_uuid(connection: &Connection, uuid: &uuid::Uuid) -> crate::ApiResult<Self>
     where
         Self: Sized;
 }
@@ -110,15 +110,15 @@ impl Update for Article {
 }
 
 impl FetchByUuid for Article {
-    fn fetch_by_uuid(connection: &Connection, entry_uuid: &uuid::Uuid) -> ApiResult<Option<Self>> {
+    fn fetch_by_uuid(connection: &Connection, entry_uuid: &uuid::Uuid) -> ApiResult<Self> {
         use crate::schema::articles::dsl::{articles, uuid};
         match articles
             .filter(uuid.eq(entry_uuid))
             .first(&connection.connection)
         {
-            Ok(result) => Ok(Some(result)),
-            Err(diesel::result::Error::NotFound) => Ok(None),
-            Err(e) => Err(crate::ApiError(format!("{}", e))),
+            Ok(result) => Ok(result),
+            Err(diesel::result::Error::NotFound) => Err(crate::ApiError::NotFound),
+            Err(e) => Err(crate::ApiError::Unknown(format!("{}", e))),
         }
     }
 }
