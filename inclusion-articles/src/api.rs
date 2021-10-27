@@ -35,7 +35,17 @@ pub trait FetchTotal {
     fn fetch_total(connection: &Connection) -> crate::ApiResult<i64>;
 }
 
-#[derive(Insertable, Identifiable, Queryable, Debug, PartialEq, QueryableByName, Clone, Serialize, Deserialize)]
+#[derive(
+    Insertable,
+    Identifiable,
+    Queryable,
+    Debug,
+    PartialEq,
+    QueryableByName,
+    Clone,
+    Serialize,
+    Deserialize,
+)]
 #[table_name = "articles"]
 #[primary_key(uuid)]
 pub struct Article {
@@ -52,9 +62,8 @@ impl Article {
         self
     }
 
-    pub fn uuid(mut self, uuid: &uuid::Uuid) -> Self
-    {
-        self.uuid = uuid.clone();
+    pub fn uuid(mut self, uuid: &uuid::Uuid) -> Self {
+        self.uuid = *uuid;
         self
     }
 }
