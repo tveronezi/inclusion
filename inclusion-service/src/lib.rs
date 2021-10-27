@@ -1,8 +1,9 @@
 #![doc = include_str ! ("../README.md")]
 
 mod api;
-mod config;
+pub mod config;
 
+use crate::config::Config;
 use actix_web::{middleware, App, HttpServer};
 use inclusion_articles::connection::ConnectionPool as ArticlesPool;
 use inclusion_articles::ApiError as ArticlesError;
@@ -35,8 +36,7 @@ impl From<std::io::Error> for ServerError {
     }
 }
 
-pub async fn start() -> Result<(), ServerError> {
-    let config = config::get_settings();
+pub async fn start(config: Config) -> Result<(), ServerError> {
     let articles_pool = Arc::new(
         config
             .get::<String>(config::ConfigKey::ArticlesDbUrl)
@@ -49,8 +49,8 @@ pub async fn start() -> Result<(), ServerError> {
                 middleware::normalize::TrailingSlash::Always,
             ))
             .data(articles_pool.clone())
-            .service(api::articles::scope())
-            .service(api::system::scope())
+            .service(api::articles::scope("/api/v1/article"))
+            .service(api::system::scope("/api/v1/system"))
     })
     .bind(config.get::<String>(config::ConfigKey::Bind))?
     .run();
