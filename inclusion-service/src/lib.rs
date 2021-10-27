@@ -3,7 +3,6 @@
 mod api;
 pub mod config;
 
-use crate::config::Config;
 use actix_web::{middleware, App, HttpServer};
 use inclusion_articles::connection::ConnectionPool as ArticlesPool;
 use inclusion_articles::ApiError as ArticlesError;
@@ -36,12 +35,8 @@ impl From<std::io::Error> for ServerError {
     }
 }
 
-pub async fn start(config: Config) -> Result<(), ServerError> {
-    let articles_pool = Arc::new(
-        config
-            .get::<String>(config::ConfigKey::ArticlesDbUrl)
-            .parse::<ArticlesPool>()?,
-    );
+pub async fn start(articlesdb_url: &str, bind: &str) -> Result<(), ServerError> {
+    let articles_pool = Arc::new(articlesdb_url.parse::<ArticlesPool>()?);
     let server = HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
@@ -52,7 +47,7 @@ pub async fn start(config: Config) -> Result<(), ServerError> {
             .service(api::articles::scope("/api/v1/article"))
             .service(api::system::scope("/api/v1/system"))
     })
-    .bind(config.get::<String>(config::ConfigKey::Bind))?
+    .bind(bind)?
     .run();
     log::info!("Service ready.");
     server.await?;
