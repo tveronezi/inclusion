@@ -9,6 +9,8 @@
 * Install `cargo-watch` with `cargo install cargo-watch`
 * Check your docker version. `Docker version 20.10.10, build b485636`
 * Check your docker-compose version. `docker-compose version 1.27.4, build 40524192`
+* Install `trunk` and `wasm-bindgen-cli` with `cargo install trunk wasm-bindgen-cli`
+* install new rust target with `rustup target add wasm32-unknown-unknown`
 
 ## How to test it?
 

@@ -13,5 +13,6 @@ cargo test
 
 # Build it
 cargo build --release
+(cd inclusion-dashboard && trunk build --release)
 
 cargo doc --release

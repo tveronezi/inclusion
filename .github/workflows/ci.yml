@@ -34,5 +34,11 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - run: rustup upgrade
+      - name: Install trunk
+        run: cargo install --locked trunk || true
+      - name: Install wasm-bindgen-cli
+        run: cargo install --locked wasm-bindgen-cli || true
+      - name: Add wasm32-unknown-unknown target
+        run: rustup target add wasm32-unknown-unknown || true
       - name: Test and build application binaries
         run: .github/workflows/ci

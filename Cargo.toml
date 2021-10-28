@@ -3,5 +3,6 @@
 members = [
     "inclusion-articles",
     "inclusion-service",
+    "inclusion-dashboard",
 ]
 
