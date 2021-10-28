@@ -1,6 +1,7 @@
 use crate::schema::articles;
 use crate::{connection::Connection, ApiResult};
 use diesel::prelude::*;
+use serde::{Deserialize, Serialize};
 
 pub trait Create {
     fn create(self, connection: &Connection) -> crate::ApiResult<Self>
@@ -19,7 +20,7 @@ pub trait DeleteByUuid {
 }
 
 pub trait FetchByUuid {
-    fn fetch_by_uuid(connection: &Connection, uuid: &uuid::Uuid) -> crate::ApiResult<Option<Self>>
+    fn fetch_by_uuid(connection: &Connection, uuid: &uuid::Uuid) -> crate::ApiResult<Self>
     where
         Self: Sized;
 }
@@ -34,7 +35,17 @@ pub trait FetchTotal {
     fn fetch_total(connection: &Connection) -> crate::ApiResult<i64>;
 }
 
-#[derive(Insertable, Identifiable, Queryable, Debug, PartialEq, QueryableByName, Clone)]
+#[derive(
+    Insertable,
+    Identifiable,
+    Queryable,
+    Debug,
+    PartialEq,
+    QueryableByName,
+    Clone,
+    Serialize,
+    Deserialize,
+)]
 #[table_name = "articles"]
 #[primary_key(uuid)]
 pub struct Article {
@@ -48,6 +59,11 @@ impl Article {
         T: ToString,
     {
         self.content = content.to_string();
+        self
+    }
+
+    pub fn uuid(mut self, uuid: &uuid::Uuid) -> Self {
+        self.uuid = *uuid;
         self
     }
 }
@@ -94,15 +110,15 @@ impl Update for Article {
 }
 
 impl FetchByUuid for Article {
-    fn fetch_by_uuid(connection: &Connection, entry_uuid: &uuid::Uuid) -> ApiResult<Option<Self>> {
+    fn fetch_by_uuid(connection: &Connection, entry_uuid: &uuid::Uuid) -> ApiResult<Self> {
         use crate::schema::articles::dsl::{articles, uuid};
         match articles
             .filter(uuid.eq(entry_uuid))
             .first(&connection.connection)
         {
-            Ok(result) => Ok(Some(result)),
-            Err(diesel::result::Error::NotFound) => Ok(None),
-            Err(e) => Err(crate::ApiError(format!("{}", e))),
+            Ok(result) => Ok(result),
+            Err(diesel::result::Error::NotFound) => Err(crate::ApiError::NotFound),
+            Err(e) => Err(crate::ApiError::Unknown(format!("{}", e))),
         }
     }
 }

@@ -2,5 +2,6 @@
 
 members = [
     "inclusion-articles",
+    "inclusion-service",
 ]
 

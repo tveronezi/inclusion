@@ -8,6 +8,7 @@ use std::str::FromStr;
 use inclusion_articles::api::{
   Article, Create, DeleteByUuid, FetchByUuid, FetchPage, FetchTotal, Update,
 };
+use inclusion_articles::ApiError;
 use inclusion_articles::connection::ConnectionPool;
 
 fn main() {
@@ -37,7 +38,7 @@ fn main() {
 
   // get an article by uuid
   assert_eq!(
-    Some(article.clone()),
+    article.clone(),
     Article::fetch_by_uuid(&connection, &article.uuid).unwrap()
   );
 
@@ -46,15 +47,15 @@ fn main() {
   let article = article.update(&connection).unwrap();
   assert_eq!("# Updated!".to_string(), article.content);
   assert_eq!(
-    Some(article.clone()),
+    article.clone(),
     Article::fetch_by_uuid(&connection, &article.uuid).unwrap()
   );
 
   // delete the article
   Article::delete_by_uuid(&connection, &article.uuid).unwrap();
   assert_eq!(
-    None,
-    Article::fetch_by_uuid(&connection, &article.uuid).unwrap()
+    ApiError::NotFound,
+    Article::fetch_by_uuid(&connection, &article.uuid).err().unwrap()
   );
 
   // create several articles
