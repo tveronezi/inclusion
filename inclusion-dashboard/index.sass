@@ -1,0 +1,85 @@
+.app
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+  align-items: center
+
+.app-page-header-logo
+  font-size: 30px
+  font-weight: 100
+
+.app-page-center
+  display: flex
+  flex-direction: column
+  align-items: center
+  width: 100%
+  padding: 20px
+  > div
+    width: 100%
+    max-width: 1200px
+
+.app-page
+  width: 100%
+  min-height: 100%
+  > div.app-page-center
+    &:first-child
+      background-color: yellow
+
+.app-page-header-menu
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+.app-page-header-links
+  list-style-type: none
+  margin: 0
+  padding: 0
+  overflow: hidden
+  > li
+    float: left
+    margin-left: 15px
+
+.app-page-header-title
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  min-height: 350px
+  > *:first-child
+    margin-top: 0
+  > *:last-child
+    margin-bottom: 0
+
+.app-cards
+  display: grid
+  grid-template-columns: 1fr 1fr 1fr
+  grid-gap: 20px
+  padding: 20px 0
+  .card
+    margin: 0
+
+.app-card.app-card-expanded
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  z-index: 1000
+  background-color: transparentize(#000, .5)
+  > div
+    position: relative
+    margin: 50px 50px 0 50px
+    height: calc(100% - 100px)
+    > div.card-image
+      position: absolute
+      top: -30px
+      left: -30px
+      max-width: 80px
+    > div.card-content
+      position: absolute
+      top: 30px
+      left: 30px
+      right: 30px
+
+//.app-markdown-text
